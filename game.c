@@ -114,7 +114,7 @@ bool is_collision(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info)
     
     for(int i=0; i<piece->rows; ++i)
         for(int j=0; j<piece->cols; ++j)
-            if((piece->board[i][j] == 'X') && (board[row+i][col+j] == 'X'))
+            if((piece->board[i][j] == '#') && (board[row+i][col+j] == 'X'))
             	return true; // piece collides with another structure in the board
     
     return false;
@@ -168,7 +168,7 @@ bool is_terminal(char board[MAX_ROWS][MAX_COLUMNS])
 	{
 		for (int j = 0; j < MAX_COLUMNS; j++)
 		{
-			if (board[i][j] == 'X')
+			if (board[i][j] == '#')
 				return true;
 		}
 	}
