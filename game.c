@@ -168,7 +168,7 @@ bool is_terminal(char board[MAX_ROWS][MAX_COLUMNS])
 	{
 		for (int j = 0; j < MAX_COLUMNS; j++)
 		{
-			if (board[i][j] == '#')
+			if (board[i][j] == 'X')
 				return true;
 		}
 	}
