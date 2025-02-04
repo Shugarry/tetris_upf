@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "pieces.h"
 
-#define MAX_ROWS 10
+#define MAX_ROWS 15
 #define MAX_COLUMNS 12
 
 // ToDo in LAB 1 - define macros MAX_ROWS and MAX_COLUMNS

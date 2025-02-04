@@ -4,7 +4,7 @@ SRC = game.c main.c pieces.c session.c utils.c
 OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
-$(NAME): Makefile $(OBJ)
+$(NAME): Makefile $(OBJ) $(wildcard *.h)
 	@$(COMPILE) $(SRC) -o $(NAME) 
 clean:
 	@rm -f $(OBJ)
