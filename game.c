@@ -160,6 +160,9 @@ void init_game_state(GameState *game_state)
 	}
 	get_new_random_piece(game_state);
 }
+// just a function that initializes game_state.score, and a double loop which
+// sets the entire boards to '.', also call for a new piece at the start of the
+// game
 
 
 bool is_terminal(char board[MAX_ROWS][MAX_COLUMNS])
@@ -174,6 +177,7 @@ bool is_terminal(char board[MAX_ROWS][MAX_COLUMNS])
 	}
     return false;
 }
+// checks whether there is a blocked cell in the top 4 rows of the board.
 
 
 void move_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int option)
@@ -181,7 +185,7 @@ void move_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int op
 	int dir;
 	int new_col;
 
-	if (option == MOVE_LEFT) //check move direction
+	if (option == MOVE_LEFT)
 		dir = -1;
 	else if (option == MOVE_RIGHT)
 		dir = 1;
@@ -191,22 +195,26 @@ void move_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int op
 		return;
 	}
 
-	new_col = piece_info->at_col + dir; //new column calculation
+	new_col = piece_info->at_col + dir;
 
-	PieceInfo tmp_info = *piece_info; //create tmp
+	PieceInfo tmp_info = *piece_info;
 	tmp_info.at_col = new_col;
 
-	if (!is_collision(board, &tmp_info)) //if no collision, update position
+	if (!is_collision(board, &tmp_info))
 		piece_info->at_col = new_col;
 	else
 		printf("Can't move that direction\n");
 }
+// move_piece first checks if movement is valid (is equals to move left or 
+// right), then creates a tmp new_col variable to see if placing the piece at
+// that new spot is valid or not. if no collision is detected, update board and
+// piece position
 
 void rotate_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int option)
 {
 	PieceInfo tmp_info;
 
-	if (option != ROTATE_CW && option != ROTATE_CCW) //check valid option
+	if (option != ROTATE_CW && option != ROTATE_CCW)
 	{
 		printf("Invalid rotation option (%d)\n", option);
 		return;
@@ -214,18 +222,21 @@ void rotate_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int 
 
 	tmp_info = *piece_info;
 
-	if (option == ROTATE_CW) //try on a tmp piece
+	if (option == ROTATE_CW)
 		rotate_clockwise(&tmp_info.p);
 	else
 		rotate_counter_clockwise(&tmp_info.p);
 	
 
-	if (!is_collision(board, &tmp_info)) //if no collision, apply
+	if (!is_collision(board, &tmp_info))
 		*piece_info = tmp_info;
 	else
 		printf("Rotation causes collision. Piece not rotated.\n");
 	
 }
+// rotate_piece has a very similar logic to move_piece, checks validity of move
+// whether it collides or not, and then updates position if everything is
+// correct
 
 /********************************************************/
 /******* LAB 1 - functions to program (end here) ********/

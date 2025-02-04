@@ -13,6 +13,7 @@ void init_piece(Piece *p)
 		}
 	}
 }
+// set row/col to 0 and every index in the double array to '.'
 
 void print_piece(Piece p)
 {
@@ -29,7 +30,7 @@ void print_piece(Piece p)
 
 void rotate_clockwise(Piece *p)
 {
-    char temp[4][4] = {{}};
+    char temp[4][4] = {{0}};
 
     for (int i = 0; i < p->rows; i++)
 	{
@@ -53,6 +54,11 @@ void rotate_clockwise(Piece *p)
     p->rows = p->cols;
     p->cols = original_rows;
 }
+// the functionality of rotate clockwise is the following, create a tmp double
+// array to do the rotation. and perform the rotation by essentially swapping
+// rows and cols via new_col = p->rows - 1 - i; and new_row = j; so the shape
+// is rotate 90 degrees clockwise. then, the function just copies the tmp
+// array into the actual piece board and replaces rows and cols.
 
 void rotate_counter_clockwise(Piece *p)
 {
@@ -80,6 +86,8 @@ void rotate_counter_clockwise(Piece *p)
     p->rows = p->cols;
     p->cols = original_rows;
 }
+// rotate counter clockwise has the same logic as rotate clockwise but swapping
+// the logic for rows and cols.
 
 Piece make_O()
 {
@@ -95,6 +103,8 @@ Piece make_O()
 	tmp.board[1][1] = '#';
 	return (tmp);
 }
+// for every piece making function, declare a tmp variable, give it a name,
+// initialize the board to 0, initialize rows, cols, and draw the shape.
 
 Piece make_I()
 {
