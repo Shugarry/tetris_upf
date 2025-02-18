@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
+#include <unistd.h>
 
 #define NEW_GAME 1
 #define SAVE_GAME 2
