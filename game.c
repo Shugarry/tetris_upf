@@ -61,8 +61,8 @@ void restart_game_state(GameState *gs)
 
 	if (rows < MIN_ROWS)
 		rows = MIN_ROWS;
-	if (cols < MIN_ROWS)
-		rows = MIN_ROWS;
+	if (cols < MIN_COLUMNS)
+		cols = MIN_COLUMNS;
 
 	gs->rows = rows;
 	gs->columns = cols;
