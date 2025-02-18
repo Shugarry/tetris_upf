@@ -48,6 +48,7 @@ void new_game(Session *session){
 
 void save_game(Session *session)
 {
+	// CREATES FILE
 	char filename[MAX_STR_LENGTH];
 	printf("Enter filename to save: ");
 	read_filename(filename);
@@ -57,7 +58,7 @@ void save_game(Session *session)
 	GameState *gs = &session->current_game_state;
 	fprintf(file, "Score: %d\n\n", gs->score);
 
-	// Save piece info
+	// SAVES PIECE INFORMATOIN
 	PieceInfo *p = &gs->current_piece;
 	fprintf(file, "%d %d\n", p->at_row, p->at_col);
 	fprintf(file, "%c\n", p->p.name);
@@ -71,7 +72,7 @@ void save_game(Session *session)
 		fprintf(file, "\n");
 	}
 
-	// Save board
+	// SAVES CURRENT BOARD
 	fprintf(file, "%d %d\n", gs->rows, gs->columns);
 	for (int i = 0; i < gs->rows; i++)
 	{
@@ -83,6 +84,7 @@ void save_game(Session *session)
 	}
 	fclose(file);
 }
+// creates a file and adds the information into it by printing it
 
 void load_game(Session *session)
 {
@@ -92,12 +94,13 @@ void load_game(Session *session)
 	FILE *file = fopen(filename, "r");
 	if (!file) return;
 
+	// FREES CURRENT BOARD
 	GameState *gs = &session->current_game_state;
-	free_game_state(gs); // Free existing board
+	free_game_state(gs);
 
 	fscanf(file, "Score: %d\n\n", &gs->score);
 
-	// Load piece info
+	// READS CURR PIECE INFORMATION
 	PieceInfo *p = &gs->current_piece;
 	fscanf(file, "%d %d\n", &p->at_row, &p->at_col);
 	fscanf(file, " %c\n", &p->p.name);
@@ -110,11 +113,11 @@ void load_game(Session *session)
 		}
 	}
 
-	// Load board dimensions and allocate memory
+	// ALLOCATES MEMORY FOR BOARD
 	fscanf(file, "%d %d\n", &gs->rows, &gs->columns);
 	make_board(gs);
 
-	// Load board data
+	// ADDS BOARD DATA
 	for (int i = 0; i < gs->rows; i++)
 	{
 		for (int j = 0; j < gs->columns; j++)
@@ -124,6 +127,7 @@ void load_game(Session *session)
 	}
 	fclose(file);
 }
+// reads the file information and changes info accordingly
 
 void resume_game(Session *session)
 {
@@ -134,6 +138,7 @@ void resume_game(Session *session)
 	}
 	run_game(session);
 }
+// check if game is over just in case, and just runs the game
 
 void print_menu(){
     printf("Menu options:\n");
@@ -175,6 +180,7 @@ void run(Session *session){
     }while(option != EXIT);
 	free_game_state(&session->current_game_state);
 }
+// Had to change a bit so it works for Lab 2, most importantly, I free at the end to avoid leaks
 
 int main()
 {

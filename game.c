@@ -26,6 +26,7 @@ void	make_board(GameState *gs)
 		}
 	}
 }
+// allocates memory for the board after checking if one is active already, and exits on malloc() failure
 
 void	free_game_state(GameState *gs)
 {
@@ -37,6 +38,7 @@ void	free_game_state(GameState *gs)
 		gs->board = NULL;
 	}
 }
+// frees each string in the array one by one and the frees the pointer to string list to free the entire board
 
 void set_default_game_state(GameState *gs)
 {
@@ -46,6 +48,7 @@ void set_default_game_state(GameState *gs)
 			gs->board[i][j] = '.';
 	get_new_random_piece(gs);
 }
+// sets entire board to '.' and gets a new piece
 
 void restart_game_state(GameState *gs)
 {
@@ -66,6 +69,7 @@ void restart_game_state(GameState *gs)
 	make_board(gs);
 	set_default_game_state(gs);
 }
+// Initializes values, and starts the game state by calling make board and set default game state
 
 /**** LAB 1 - given functions ****/
 void print_game_state(GameState *gs){
@@ -188,6 +192,7 @@ bool is_collision(GameState *gs)
 	}
 	return false;
 }
+// refactored is_collision for dynamic memory
 
 int remove_completed_lines(GameState *gs)
 {
@@ -236,9 +241,8 @@ void init_game_state(GameState *game_state)
 	make_board(game_state);
 	set_default_game_state(game_state);
 }
-// just a function that initializes game_state.score, and a double loop which
-// sets the entire boards to '.', also call for a new piece at the start of the
-// game
+// refactored init_game_state to comply with Lab 2 requirements, made it work with dynamic memory and calls the functions
+// made before
 
 
 bool is_terminal(GameState *gs)
@@ -254,6 +258,7 @@ bool is_terminal(GameState *gs)
     return false;
 }
 // checks whether there is a blocked cell in the top 4 rows of the board.
+// Refactored for Lab 2 to handle with dynamic memory
 
 
 void move(GameState *gs, int option)
@@ -280,6 +285,8 @@ void move(GameState *gs, int option)
 // right), then creates a tmp new_col variable to see if placing the piece at
 // that new spot is valid or not. if no collision is detected, update board and
 // piece position
+// LAB 2: changed it for dynamic memory so that it changed the original piece on the board
+// and resets it if it collides
 
 void rotate(GameState *gs, int option)
 {
@@ -301,6 +308,7 @@ void rotate(GameState *gs, int option)
 // rotate_piece has a very similar logic to move_piece, checks validity of move
 // whether it collides or not, and then updates position if everything is
 // correct
+// LAB 2: check is _collision, very similar changes
 
 /********************************************************/
 /******* LAB 1 - functions to program (end here) ********/
