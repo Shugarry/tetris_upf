@@ -6,7 +6,7 @@ void	make_board(GameState *gs)
 {
 	if (gs->board != NULL)
 	{
-		for (int i = 0; i < gs->rows; i++)
+		for (int i = 0; gs->board[i]; i++)
 			free(gs->board[i]);
 		free(gs->board);
 	}
@@ -103,9 +103,9 @@ void print_board(GameState *game_state){
     int p_col_size = piece->cols;
     int current_row = game_state->current_piece.at_row;
     int current_col = game_state->current_piece.at_col;
-    print_line(current_row);
+    print_line(game_state->columns);
     for(int r = 0; r < game_state->rows; ++r){
-        if(r == 4) print_line(current_row);
+        if(r == 4) print_line(game_state->columns);
         printf("|");
         for(int c=0; c < game_state->columns; ++c){
             if((game_state->board[r][c] == '.') &&
@@ -117,7 +117,7 @@ void print_board(GameState *game_state){
         }
         printf("|\n");
     }
-	print_line(current_row);
+	print_line(game_state->columns);
     printf("\n");
 }
 
