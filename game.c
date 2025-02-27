@@ -1,5 +1,128 @@
 #include "main.h"
 
+// LAB 3 new functionalities
+
+// returns a GameState copy after copying all attributes and dynamically allocating
+// for board, has error handling when malloc fails as well
+GameState copy(GameState *game_state)
+{
+	GameState new_gs;
+
+	new_gs.score = game_state->score;
+	new_gs.rows = game_state->rows;
+	new_gs.columns = game_state->columns;
+	new_gs.current_piece = game_state->current_piece;
+
+	new_gs.board = (char **)malloc(new_gs.rows * sizeof(char *));
+	if (new_gs.board == NULL)
+		exit(EXIT_FAILURE);
+
+	for (int i = 0; i < new_gs.rows; i++)
+	{
+		new_gs.board[i] = (char *)malloc(new_gs.columns * sizeof(char));
+		if (new_gs.board[i] == NULL)
+		{
+			for (int j = 0; j < i; j++)
+				free(new_gs.board[j]);
+			free(new_gs.board);
+			exit(EXIT_FAILURE);
+		}
+
+		for (int j = 0; j < new_gs.columns; j++)
+			new_gs.board[i][j] = game_state->board[i][j];
+	}
+
+	return new_gs;
+}
+
+// function that checks for the highest cell blocked row
+int get_highest_blocked_row(GameState *gs)
+{
+	for (int i = 0; i < gs->rows; i++)
+	{
+		for (int j = 0; j < gs->columns; j++)
+		{
+			if (gs->board[i][j] == 'X')
+				return i;
+		}
+	}
+	return gs->rows;
+}
+
+// the recursive best score function trys all possible moves, and calculates wether
+// the score has improved on a given move, it returns the move that gives the highest score
+// in the case that a move doesn-t "improve" in score, it returns the move that
+// leaves the least highest cell blocked row, so the game goes on for longer technically
+// this part is better explained in the comments for show_best_mvoe
+int recursive_best_score(GameState *game_state, int depth)
+{
+	int			best_score = -1000000;
+	GameState	gs_copy;
+	bool		piece_blocked;
+	int			score;
+
+	if (depth <= 0 || is_terminal(game_state))
+		return game_state->score + get_highest_blocked_row(game_state);
+
+
+	for (int option = MOVE_LEFT; option <= NONE; option++)
+	{
+		gs_copy = copy(game_state);
+		piece_blocked = run_turn(&gs_copy, option, true);
+
+		if (piece_blocked || depth == 1)
+			score = gs_copy.score + get_highest_blocked_row(&gs_copy);
+		else
+			score = recursive_best_score(&gs_copy, depth - 1);
+
+		if (score > best_score)
+			best_score = score;
+
+		free_game_state(&gs_copy);
+	}
+
+	return best_score;
+}
+
+// For extra points in this lab practice:
+// In the case that no move gives an improvement in score, I've made it so the function
+// returns the move that leaves the the least highest row blocked with a cell, to mitigate losses,
+// and try to fill the lower rows as much as possible and score most points
+//
+// For example, if a move leaves blocked cells up until the 4th row, and then another 
+// move leaves blocked cells until the 3rd row, then the second move is better, so
+// thats the one it will return
+int show_best_move(GameState *game_state)
+{
+	int best_option = NONE;
+	int best_score = -1000000;
+	int best_height = 0;
+	GameState gs_copy;
+	int score;
+	int height;
+
+	for (int option = MOVE_LEFT; option <= NONE; option++)
+	{
+		gs_copy = copy(game_state);
+
+		run_turn(&gs_copy, option, true);
+
+		score = recursive_best_score(&gs_copy, MAX_DEPTH - 1);
+		height = get_highest_blocked_row(&gs_copy);
+
+		if (score > best_score || (score == best_score && height > best_height))
+		{
+			best_score = score;
+			best_option = option;
+			best_height = height;
+		}
+
+		free_game_state(&gs_copy);
+	}
+
+	return best_option;
+}
+
 // LAB 2 New functionalities
 
 void	make_board(GameState *gs)
@@ -261,7 +384,7 @@ bool is_terminal(GameState *gs)
 // Refactored for Lab 2 to handle with dynamic memory
 
 
-void move(GameState *gs, int option)
+void move(GameState *gs, int option, bool is_recursive)
 {
 	PieceInfo original = gs->current_piece;
 	int dir;
@@ -278,7 +401,8 @@ void move(GameState *gs, int option)
 	if (is_collision(gs))
 	{
 		gs->current_piece = original;
-		printf("Can't move that direction\n");
+		if (!is_recursive)
+			printf("Can't move that direction\n");
 	}
 }
 // move_piece first checks if movement is valid (is equals to move left or 
@@ -288,7 +412,7 @@ void move(GameState *gs, int option)
 // LAB 2: changed it for dynamic memory so that it changed the original piece on the board
 // and resets it if it collides
 
-void rotate(GameState *gs, int option)
+void rotate(GameState *gs, int option, bool is_recursive)
 {
     PieceInfo original = gs->current_piece;
 
@@ -302,7 +426,8 @@ void rotate(GameState *gs, int option)
 	if (is_collision(gs))
 	{
 		gs->current_piece = original;
-		printf("Rotation causes collision. Piece not rotated.\n");
+		if (!is_recursive)
+			printf("Rotation causes collision. Piece not rotated.\n");	
 	}
 }
 // rotate_piece has a very similar logic to move_piece, checks validity of move
@@ -314,25 +439,31 @@ void rotate(GameState *gs, int option)
 /******* LAB 1 - functions to program (end here) ********/
 /********************************************************/
 
-void run_turn(GameState *game_state, int option){
+// modified run_turn to return true or false when a piece gets blocked or not after a
+// turn is completed, i also added my own modification (is_recursive), to see
+// whether a turn is being run inside a recursive function, so no printing happens
+// on screen from move() or rotate() functions
+bool run_turn(GameState *game_state, int option, bool is_recursive){
 	PieceInfo *p_inf = &(game_state->current_piece);
 	if(option == MOVE_LEFT || option == MOVE_RIGHT) 
-		move(game_state, option);
+		move(game_state, option, is_recursive);
 	else if(option == ROTATE_CW || option == ROTATE_CCW)
-		rotate(game_state, option);
-    else if(option == NONE){} // do nothing
-    else{ printf("[ERROR] Invalid option %d.\n", option); exit(-3); }
+		rotate(game_state, option, is_recursive);
+	else if(option == NONE){} // do nothing
+	else{ printf("[ERROR] Invalid option %d.\n", option); exit(-3); }
 
 	// Move down if possible, otherwise block the piece and remove
-    // the completed lines, aggregating them to the current score.
-    // If it is not in a terminal state, add a new random piece to the board.
+	// the completed lines, aggregating them to the current score.
+	// If it is not in a terminal state, add a new random piece to the board.
 	p_inf->at_row++;
 	if(is_collision(game_state)){
 		p_inf->at_row--;
 		block_current_piece(game_state);
-        game_state->score += remove_completed_lines(game_state);
-        if(!is_terminal(game_state))
-            get_new_random_piece(game_state);
+		game_state->score += remove_completed_lines(game_state);
+		if(!is_terminal(game_state))
+			get_new_random_piece(game_state);
+		return(true);
 	}
+	return(false);
 }
 

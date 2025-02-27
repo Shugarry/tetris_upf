@@ -1,44 +1,58 @@
 #include "main.h"
 
+// refactored run_game a bit, for lab 3 to print the best possible move for the current state
 void run_game(Session *session){
-    GameState *game_state = &session->current_game_state;
+	GameState *game_state = &session->current_game_state;
 
-    bool finish_game; 
+	bool finish_game; 
 
-    do{
-        // 1. Print data
-        printf("Best score: %d\n", session->best_score);
-        print_game_state(game_state);
+	do{
+		// 1. Print data
+		printf("Best score: %d\n", session->best_score);
+		print_game_state(game_state);
 
-        // 2. Select a move
-        int game_option;
-        do{
-            print_options(game_state->board);
-            printf("Enter a game option: ");
-            game_option = read_int();
-        }while(!is_valid_option(game_option));
-        
-        // 3.a Quit game
-        if(game_option == QUIT_GAME)
-            return;
-        // 3.b Show best move
-        if(game_option == SHOW_BEST_MOVE){
-            // ToDo in Lab 3
-            continue;
-        }
+		// 2. Select a move
+		int game_option;
+		do{
+			print_options(game_state->board);
+			printf("Enter a game option: ");
+			game_option = read_int();
+		}while(!is_valid_option(game_option));
 
-        // 3.c Run one turn with the given option
-        run_turn(game_state, game_option);
+		// 3.a Quit game
+		if(game_option == QUIT_GAME)
+			return;
+		// 3.b Show best move
+		if(game_option == SHOW_BEST_MOVE)
+		{
+			printf("Calculating best move...\n");
+			int best_move = show_best_move(game_state);
+			printf("Best move: ");
+			if (best_move == MOVE_LEFT)
+				printf("Move left\n");
+			if (best_move == MOVE_RIGHT)
+				printf("Move right\n");
+			if (best_move == ROTATE_CW)
+				printf("Rotate clockwise\n");
+			if (best_move == ROTATE_CCW)
+				printf("Rotate counter-clockwise\n");
+			if (NONE)
+				printf("None\n");
+			continue;
+		}
 
-        // 4. Update scores
-        session->best_score = max(session->best_score, game_state->score);
-        
-        // 5. Add new number
-        finish_game = is_terminal(game_state);
-    }while(!finish_game);
+		// 3.c Run one turn with the given option
+		run_turn(game_state, game_option, false);
 
-    printf("*** GAME OVER ***\n");
-    print_game_state(game_state);
+		// 4. Update scores
+		session->best_score = max(session->best_score, game_state->score);
+
+		// 5. Add new number
+		finish_game = is_terminal(game_state);
+	}while(!finish_game);
+
+	printf("*** GAME OVER ***\n");
+	print_game_state(game_state);
 }
 
 void new_game(Session *session){
