@@ -92,6 +92,10 @@ int recursive_best_score(GameState *game_state, int depth)
 // For example, if a move leaves blocked cells up until the 4th row, and then another 
 // move leaves blocked cells until the 3rd row, then the second move is better, so
 // thats the one it will return
+//
+// IMPORTANT NOTE: it is pretty normal if sometimes the move calculation takes a bit of time, 
+// since it is going through a lot of levels of recursion
+// the recursion can't go infinitely since MAX_DEPTH (10 levels of recursion) acts as a safeguard for infinite loops
 int show_best_move(GameState *game_state)
 {
 	int best_option = NONE;

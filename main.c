@@ -25,7 +25,7 @@ void run_game(Session *session){
 		// 3.b Show best move
 		if(game_option == SHOW_BEST_MOVE)
 		{
-			printf("Calculating best move...\n");
+			printf("\nCalculating best move... Please wait, this may take a bit of time\n\n");
 			int best_move = show_best_move(game_state);
 			printf("Best move: ");
 			if (best_move == MOVE_LEFT)
@@ -36,8 +36,9 @@ void run_game(Session *session){
 				printf("Rotate clockwise\n");
 			if (best_move == ROTATE_CCW)
 				printf("Rotate counter-clockwise\n");
-			if (NONE)
+			if (best_move == NONE)
 				printf("None\n");
+			printf("\n");
 			continue;
 		}
 

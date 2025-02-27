@@ -19,4 +19,7 @@ are cell blocked.
 For a more concrete example; imagine a move leaves cells blocked all the way to the 4th row, but then another move leaves only until the 3rd row, that
 second move is better because it technically lets you play longer because you are further from losing the game.
 
-All of this is also explained a bit in the comments of the actual program.
+IMPORTANT NOTE: it is pretty normal if sometimes the move calculation takes a bit of time, since it is going through a lot of levels of recursion
+the recursion can't go infinitely since MAX_DEPTH (10 levels of recursion) acts as a safeguard for infinite loops.
+
+All of this is also explained or repeated a bit in the comments of the actual code.
